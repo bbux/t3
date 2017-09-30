@@ -33,16 +33,22 @@ def random_choice(env):
     """
     return np.random.choice(env.available_actions())
     
-class Game(object):
+class QTableTrainer(object):
     """ class for encapsulating learning the game of tic tac toe """
     def __init__(self, lr=0.8, gamma=0.95):
+        """ Creates a trainer that uses a QTable to learn how to play tic tac toe
+
+            args: lr    - learning rate
+                  gamma - maximum discounted future reward
+        """
+
         self.lr = lr
         self.gamma = gamma
         self.Q = np.zeros([env.state_space, env.action_space])        
         
         
-    def play(self, env, num_episodes):
-        """ play the game using the provided enviromnent for the given number of episodes
+    def learn(self, env, num_episodes):
+        """ learn the game using the provided enviromnent for the given number of episodes
             
             args: env - tic tac toe environment
                   num_episodes - number of iterations to learn from
@@ -91,8 +97,8 @@ class Game(object):
 # the tic tac toe environment
 env = t3.make()
 # 
-game = Game()
-average_cumulative_reward = game.play(env, 2000);
+trainer = QTableTrainer()
+average_cumulative_reward = trainer.learn(env, 2000);
 #%% Results
 print("Score over time: " +  str(average_cumulative_reward))
 
