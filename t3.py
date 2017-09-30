@@ -66,14 +66,14 @@ class Env:
         
     def _play(self, position, marker):
         """ play the marker at given positon """
-        if position not in range(0,8):
+        if position not in range(0,9):
             raise Exception("Position: %d is not valid! Must be 0-8." % position)
         if self.state[position] != EMPTY_MARKER:
             raise Exception("Position %d is not empty!" % position)
         self.state[position] = marker;
         reward = self._calculate_reward(marker)
         # non zero reward means game is done
-        return (self._calculate_state_index(), reward, reward != 0)
+        return (self._calculate_state_index(), reward, self._game_is_done())
     
     def _calculate_reward(self, marker):
         """ if this is a win state for the given marker """
@@ -86,6 +86,20 @@ class Env:
                 return self.reward
             
         return 0
+        
+    def _game_is_done(self):
+        """ is the game over, x wins, o wins, or draw """
+        x_reward = self._calculate_reward(X_MARKER)
+        if x_reward != 0:
+            return True
+            
+        o_reward = self._calculate_reward(O_MARKER)
+        if o_reward != 0:
+            return True
+            
+        # last check, no more moves left
+        no_moves_left = 0 not in self.state
+        return no_moves_left
             
     def _calculate_state_index(self):
         """ given the state of the board, where the x's and o's are, what index

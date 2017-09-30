@@ -33,51 +33,67 @@ def random_choice(env):
     """
     return np.random.choice(env.available_actions())
     
+class Game(object):
+    """ class for encapsulating learning the game of tic tac toe """
+    def __init__(self, lr=0.8, gamma=0.95):
+        self.lr = lr
+        self.gamma = gamma
+        self.Q = np.zeros([env.state_space, env.action_space])        
+        
+        
+    def play(self, env, num_episodes):
+        """ play the game using the provided enviromnent for the given number of episodes
+            
+            args: env - tic tac toe environment
+                  num_episodes - number of iterations to learn from
+                  
+            returns: reward - the average cumulative reward
+        """
+        rList = []
+        
+        #%% runn
+        for i in range(num_episodes):
+            #Reset environment and get first new observation
+            s = env.reset()
+            # cumulateive reward
+            cumulative_reward = 0
+            done = False
+            j = 0
+            #The Q-Table learning algorithm
+            while j < 5:
+                j+=1
+                #Choose an action by greedily (with noise) picking from Q table
+                #a = np.argmax(Q[s,:] + np.random.randn(1,env.action_space)*(1./(i+1)))
+                a = pick_best_available_action(self.Q, s, env, i)
+                #Get new state and reward from environment
+                s1, reward, done = env.playX(a)
+                #Update Q-Table with new knowledge
+                self.Q[s,a] = self.Q[s,a] + self.lr*(reward + self.gamma*np.max(self.Q[s1,:]) - self.Q[s,a])
+                cumulative_reward += reward
+                s = s1
+                if done == True:
+                    break
+                # now play random play for O
+                _, _, done = env.playO(random_choice(env))
+                if done == True:
+                    break
+            # end while
+            rList.append(cumulative_reward)
+        # end for    
+        return sum(rList)/num_episodes
+
+    def reset(self):
+        self.Q.fill(0)
     
 ############################
 # Start Script
 ###########################
 # the tic tac toe environment
 env = t3.make()
-
-#Initialize table with all zeros
-Q = np.zeros([env.state_space, env.action_space])
-# Set learning parameters
-lr = .8
-y = .95
-num_episodes = 20
-#create lists to contain total rewards and steps per episode
-rList = []
-
-#%% runn
-for i in range(num_episodes):
-    #Reset environment and get first new observation
-    s = env.reset()
-    rAll = 0
-    d = False
-    j = 0
-    #The Q-Table learning algorithm
-    while j < 99:
-        j+=1
-        #Choose an action by greedily (with noise) picking from Q table
-        #a = np.argmax(Q[s,:] + np.random.randn(1,env.action_space)*(1./(i+1)))
-        a = pick_best_available_action(Q, s, env, i)
-        #Get new state and reward from environment
-        s1,r,d = env.playX(a)
-        #Update Q-Table with new knowledge
-        Q[s,a] = Q[s,a] + lr*(r + y*np.max(Q[s1,:]) - Q[s,a])
-        rAll += r
-        s = s1
-        if d == True:
-            break
-        # now play random play for O
-        env.playO(random_choice(env))
-
-    rList.append(rAll)
-
+# 
+game = Game()
+average_cumulative_reward = game.play(env, 2000);
 #%% Results
-print("Score over time: " +  str(sum(rList)/num_episodes))
+print("Score over time: " +  str(average_cumulative_reward))
 
-print("Final Q-Table Values")
-print(Q)
 
