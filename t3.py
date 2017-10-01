@@ -66,12 +66,16 @@ class Env(object):
         """
         return self._play(position, O_MARKER)
 
+    def can_play(self, position):
+        """ is the given position playable, i.e. no X or O on it """
+        return self.state[position] == EMPTY_MARKER
+
     def _play(self, position, marker):
         """ play the marker at given positon """
         if position not in range(0, 9):
             raise Exception("Position: %d is not valid! Must be 0-8." % position)
 
-        if self.state[position] != EMPTY_MARKER:
+        if not self.can_play(position):
             raise Exception("Position %d is not empty!" % position)
 
         self.state[position] = marker
