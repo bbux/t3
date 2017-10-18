@@ -62,6 +62,7 @@ class QNetworkTrainer(object):
         # reuse single array
         state_feed = state_array(env.state_space, 0)
 
+        _ = tf.summary.FileWriter("/tmp/tensorflow", graph=tf.get_default_graph())
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             for i in range(num_episodes):
@@ -88,7 +89,7 @@ class QNetworkTrainer(object):
                     targetQ = allQ
                     targetQ[0,a[0]] = reward + self.gamma * maxQ1
                     #Train our network using target and predicted Q values
-                    _,W1 = sess.run([updateModel, W], feed_dict={state_input:np.identity(env.state_space)[s:s+1], target_q:targetQ})
+                    _,W1 = sess.run([updateModel, W], feed_dict={state_input: state_feed, target_q:targetQ})
                     cumulative_reward += reward
                     # deactivate last state and activate next
                     state_feed[0][s] = 0.0

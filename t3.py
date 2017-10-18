@@ -19,13 +19,17 @@ WIN_POSITIONS = [
 class Env(object):
     """ Class for holding tic tac toe environment """
 
-    def __init__(self, win_reward=1):
+    def __init__(self, win_reward=1, lose_reward=-1, player=X_MARKER):
         """ conscructs a tic tac toe environment
 
-            args - win_reward - reward for winning, default is 1
+            args - win_reward   - reward for winning, default is 1
+                   loose_reward - reward for losing, default is -1
+                   player       - who is trying to win, 1 for X, 2 for O
         """
         self.reset()
-        self.reward = win_reward
+        self.win_reward = win_reward
+        self.lose_reward = lose_reward
+        self.player = player
         self.state_space = 3**9
         self.action_space = 9
 
@@ -50,7 +54,7 @@ class Env(object):
         args: position to play X marker
 
         return: state_index - after playing
-                reward      - if any (default is 1 for win, zero otherwise)
+                win_reward  - if any (default is 1 for win, -1 lose, 0 otherwise)
                 done        - if game is over
         """
         return self._play(position, X_MARKER)
@@ -61,7 +65,7 @@ class Env(object):
         args: position to play O marker
 
         return: state_index - after playing
-                reward      - if any (default is 1 for win, zero otherwise)
+                win_reward  - if any (default is 1 for win, -1 for lose, zero otherwise)
                 done        - if game is over
         """
         return self._play(position, O_MARKER)
@@ -94,18 +98,21 @@ class Env(object):
             vals = [self.state[i] for i in wins]
             # i.e [1, 1, 1] or [2, 2, 2]
             if vals == all_same:
-                return self.reward
-
+                if marker == self.player:
+                    return self.win_reward
+                else:
+                    return self.lose_reward
+        
         return 0
 
     def _game_is_done(self):
         """ is the game over, x wins, o wins, or draw """
-        x_reward = self._calculate_reward(X_MARKER)
-        if x_reward != 0:
+        x_win_reward = self._calculate_reward(X_MARKER)
+        if x_win_reward != 0:
             return True
 
-        o_reward = self._calculate_reward(O_MARKER)
-        if o_reward != 0:
+        o_win_reward = self._calculate_reward(O_MARKER)
+        if o_win_reward != 0:
             return True
 
         # last check, no more moves left
