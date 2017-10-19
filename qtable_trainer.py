@@ -115,6 +115,7 @@ class QTableTrainer(object):
             # Update Q-Table with new knowledge from o play
             s2, o_reward, done = env.play_O(random_choice(env))
             self.Q[s, a] = self.Q[s, a] + self.lr*((x_reward + o_reward) + self.gamma*np.max(self.Q[s2, :]) - self.Q[s, a])
+            self.Q[s1, a] = self.Q[s1, a] + self.lr*((x_reward + o_reward) + self.gamma*np.max(self.Q[s2, :]) - self.Q[s1, a])
             cumulative_reward += o_reward
 
             s = s2
@@ -125,7 +126,7 @@ class QTableTrainer(object):
         return cumulative_reward
 
     def play(self, env):
-        """ uses the learned policy to play tic tac to with the given environment """
+        """ uses the learned policy to play tic tac interactively """
         s = 0
         while True:
             move = pick_best_move(self.Q, s, env)
@@ -149,6 +150,23 @@ class QTableTrainer(object):
             if done:
                 print("Its a tie")
                 break;
+
+    def play_self(self, env):
+        """ uses the learned policy to play tic tac against self """
+        s = 0
+        reward = 0
+        while True:
+            move = pick_best_move(self.Q, s, env)
+            s, reward, done = env.play_X(int(move))
+
+            if done:
+                break;
+
+            s, reward, done = env.play_O(random_choice(env))
+
+            if done:
+                break;
+        return reward
 
     def reset(self):
         """ reset the values for the Q Table """

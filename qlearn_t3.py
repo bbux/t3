@@ -11,7 +11,23 @@ def train(trainer, env):
     print("Score over time: %f" % average_cumulative_reward)
     print("Training Time: %f" % (time.time() - start))
     env.reset()
-    trainer.play(env)
+
+#    trainer.play(env)
+
+    wins = 0
+    losses = 0
+    ties = 0
+    for i in range(1000):
+        env.reset()
+        reward = trainer.play_self(env)
+        if reward == 1:
+            wins += 1
+        elif reward == -1:
+            losses += 1
+        else:
+            ties += 1
+            
+    print("Wins: %d, Losses: %d, Ties %d" % (wins, losses, ties))
 
 def main():
     # the tic tac toe environment
