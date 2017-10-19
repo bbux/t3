@@ -62,7 +62,6 @@ class QNetworkTrainer(object):
         # reuse single array
         state_feed = state_array(env.state_space, 0)
 
-        _ = tf.summary.FileWriter("/tmp/tensorflow", graph=tf.get_default_graph())
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             for i in range(num_episodes):

@@ -7,9 +7,11 @@ from qnetwork_trainer import QNetworkTrainer
 
 def train(trainer, env):
     start = time.time()
-    average_cumulative_reward = trainer.learn(env, 2000)
+    average_cumulative_reward = trainer.learn(env, 10000)
     print("Score over time: %f" % average_cumulative_reward)
     print("Training Time: %f" % (time.time() - start))
+    env.reset()
+    trainer.play(env)
 
 def main():
     # the tic tac toe environment
@@ -17,7 +19,7 @@ def main():
     print("Training with QTable...")
     train(QTableTrainer(t3env), t3env)
     print("Training with QNetwork...")
-    train(QNetworkTrainer(), t3env)
+    #train(QNetworkTrainer(), t3env)
 
 
 if __name__ == "__main__":

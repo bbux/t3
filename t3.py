@@ -74,6 +74,23 @@ class Env(object):
         """ is the given position playable, i.e. no X or O on it """
         return self.state[position] == EMPTY_MARKER
 
+    def print_state(self):
+        """ prints out the board in ascii art """
+        row1 = [self._get_mark(m) for m in self.state[0:3]]
+        row2 = [self._get_mark(m) for m in self.state[3:6]]
+        row3 = [self._get_mark(m) for m in self.state[6:9]]
+        print(" ".join(row1) + "\n")
+        print(" ".join(row2) + "\n")
+        print(" ".join(row3) + "\n")
+
+    def _get_mark(self, marker):
+        if marker == X_MARKER:
+            return "X"
+        elif marker == O_MARKER:
+            return "O"
+        else:
+            return "_"
+
     def _play(self, position, marker):
         """ play the marker at given positon """
         if position not in range(0, 9):
