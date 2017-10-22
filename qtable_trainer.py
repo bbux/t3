@@ -25,24 +25,7 @@ def pick_best_available_action(Q, s, env, i):
     return best_choice
 
 
-def pick_best_move(Q, s, env):
-    """ pick an best move from available ones
 
-        args: Q   - the q learning matrix
-              s   - the current state
-              env - the tic tac toe environment
-
-        returns: the best move
-    """
-    # what board moves can we chose from
-    available_actions = env.available_actions()
-    # current rewards forthe available actions
-    q_available = [-10] * 9
-    for i in available_actions:
-        q_available[i] = Q[s, i]
-    best_choice = np.argmax(q_available)
-
-    return best_choice
 
 
 def random_choice(env):
@@ -125,48 +108,23 @@ class QTableTrainer(object):
 
         return cumulative_reward
 
-    def play(self, env):
-        """ uses the learned policy to play tic tac interactively """
-        s = 0
-        while True:
-            move = pick_best_move(self.Q, s, env)
-            s, reward, done = env.play_X(int(move))
-            if reward != 0:
-                print("X won!")
-
-            if done:
-                break;
-
-            env.print_state()
-            available = env.available_actions()
-            move = input("Enter Move for O. Available: " + str(available) + "\n")
-            if int(move) not in available:
-                raise Exception("Invalid Move")
-
-            s, reward, done = env.play_O(int(move))
-            if reward != 0:
-                print("O won!")
-
-            if done:
-                print("Its a tie")
-                break;
-
-    def play_self(self, env):
-        """ uses the learned policy to play tic tac against self """
-        s = 0
-        reward = 0
-        while True:
-            move = pick_best_move(self.Q, s, env)
-            s, reward, done = env.play_X(int(move))
-
-            if done:
-                break;
-
-            s, reward, done = env.play_O(random_choice(env))
-
-            if done:
-                break;
-        return reward
+    def pick_best_move(self, s, env):
+        """ pick an best move from available ones
+    
+            args: s   - the current state
+                  env - the tic tac toe environment
+    
+            returns: the best available move
+        """
+        # what board moves can we chose from
+        available_actions = env.available_actions()
+        # current rewards forthe available actions
+        q_available = [-10] * 9
+        for i in available_actions:
+            q_available[i] = self.Q[s, i]
+        best_choice = np.argmax(q_available)
+    
+        return best_choice
 
     def reset(self):
         """ reset the values for the Q Table """
