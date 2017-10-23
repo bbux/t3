@@ -3,6 +3,7 @@
 import numpy as np
 import tensorflow as tf
 
+
 def random_choice(env):
     """ makes a random move choice from available ones
 
@@ -24,7 +25,7 @@ class QNetworkTrainer(object):
     """ class for encapsulating learning the game of tic tac toe using tensorflow
         neural network    
     """
-    def __init__(self, lr=0.05, rand_choice=0.1, gamma=0.99):
+    def __init__(self, lr=0.01, rand_choice=0.1, gamma=0.99):
         """ Creates a trainer that uses a tensorflow neural net to learn how to
             play tic tac toe
 
@@ -72,6 +73,8 @@ class QNetworkTrainer(object):
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             for i in range(num_episodes):
+                # reset input vector
+                self.state_feed.fill(0)
                 # Reset environment and get first new observation
                 s = env.reset()
                 # cumulateive reward
@@ -81,6 +84,9 @@ class QNetworkTrainer(object):
                 #The Q-Network
                 while j <= 5:
                     j += 1
+                    # set input vector to activate current state
+                    self.state_feed[0][s] = 1.0
+
                     #Choose an action by greedily (with e chance of random action) from the Q-network
                     a, allQ = sess.run([self.predict, self.q_out], feed_dict={self.state_input: self.state_feed})
                     # store the state to action mapping for later
@@ -112,7 +118,6 @@ class QNetworkTrainer(object):
 
                     # deactivate last state and activate next
                     self.state_feed[0][s] = 0.0
-                    self.state_feed[0][s2] = 1.0
                     s = s2
                     
                     if done:
@@ -152,6 +157,6 @@ class QNetworkTrainer(object):
             best_choice = np.argmax(q_available + allQ)
     
         # unset input action
-        self.state_feed[0][s] = 1.0
+        self.state_feed[0][s] = 0.0
         
         return best_choice
