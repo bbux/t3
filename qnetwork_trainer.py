@@ -14,12 +14,12 @@ def random_choice(env):
     return np.random.choice(env.available_actions())
 
 
-
 def state_array(size, index):
     """ build array and set the index of the given state """
     array = np.zeros((1,size), dtype=np.float32)
     array[0][index] = 1.0
     return array
+
 
 class QNetworkTrainer(object):
     """ class for encapsulating learning the game of tic tac toe using tensorflow
@@ -135,7 +135,7 @@ class QNetworkTrainer(object):
         return sum(r_list)/num_episodes
 
     def pick_best_move(self, s, env):
-        """ pick an best move from available ones
+        """ pick the best move from available ones
     
             args: s   - the current state
                   env - the tic tac toe environment

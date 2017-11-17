@@ -27,7 +27,7 @@ def main():
 
     print("Evaluating QTable")
     player = Player(table_trainer)
-    player.evaluate(t3env, 1000)
+    player.evaluate(t3env, 2000)
 
     print("Training with QNetwork...")
     network_trainer = QNetworkTrainer()
@@ -35,7 +35,7 @@ def main():
 
     print("Evaluating QNetwork")
     player = Player(network_trainer)
-    player.evaluate(t3env, 1000)
+    player.evaluate(t3env, 2000)
 
 
 if __name__ == "__main__":
