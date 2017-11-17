@@ -25,9 +25,6 @@ def pick_best_available_action(Q, s, env, i):
     return best_choice
 
 
-
-
-
 def random_choice(env):
     """ makes a random move choice from available ones
 
@@ -69,9 +66,7 @@ class QTableTrainer(object):
         for i in range(num_episodes):
             #Reset environment and get first new observation
             s = env.reset()
-            # cumulateive reward
             cumulative_reward = self.run_episode(env, s, i)
-            # end while
             rList.append(cumulative_reward)
         # end for
         return sum(rList)/num_episodes
